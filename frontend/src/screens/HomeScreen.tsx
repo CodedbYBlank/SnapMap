@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { ScreenProps } from "../types";
+import { useUser } from "@clerk/clerk-expo";
 
 const HomeScreen = ({ navigation }: ScreenProps<"HomeScreen">) => {
+  const { user } = useUser();
+
+  console.log("user", user);
+
+  useEffect(() => {
+    if (!user) return;
+
+    if (!user.publicMetadata?.isRegistered) {
+      navigation.navigate("RegisterUserScreen");
+    }
+  }, [user, navigation]);
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.logoContainer}>

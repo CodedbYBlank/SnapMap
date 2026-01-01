@@ -18,6 +18,7 @@ export type RootParamList = {
   ProfileScreen: undefined;
   SettingsScreen: undefined;
   ErrorScreen: undefined;
+  RegisterUserScreen: undefined;
 };
 
 export type ScreenProps<T extends keyof RootParamList> = NativeStackScreenProps<

@@ -19,6 +19,7 @@ import MyUploadsScreen from "../screens/MyUploadsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import ErrorScreen from "../screens/ErrorScreen";
+import RegisterUserScreen from "../screens/RegisterUserScreen";
 
 const Stack = createNativeStackNavigator<RootParamList>();
 
@@ -49,6 +50,7 @@ const MainNavigator = () => {
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
       <Stack.Screen name="ErrorScreen" component={ErrorScreen} />
+      <Stack.Screen name="RegisterUserScreen" component={RegisterUserScreen} />
     </Stack.Navigator>
   );
 };
