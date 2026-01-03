@@ -95,25 +95,11 @@ const RegisterUserScreen = ({ navigation }: ScreenProps<"RegisterUserScreen">) =
           console.log("Template token failed, trying without template");
         }
       }
-      
-      console.log("Token retrieved:", token ? "Token exists" : "Token is null");
-      console.log("Token length:", token?.length || 0);
-      
       if (!token) {
         Alert.alert("Error", "Authentication token not available. Please sign in again.");
         setIsSubmitting(false);
         return;
       }
-
-      console.log("Making API request to:", `${API_BASE_URL}/api/v1/auth/signup`);
-      console.log("Request payload:", {
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        collegeName: formData.collegeName.trim(),
-        phoneNumber: formData.phoneNumber.trim() || undefined,
-        year: formData.year.trim() || undefined,
-        gender: formData.gender.trim() || undefined,
-      });
 
       const response = await fetch(`${API_BASE_URL}/api/v1/auth/signup`, {
         method: "POST",
@@ -131,13 +117,14 @@ const RegisterUserScreen = ({ navigation }: ScreenProps<"RegisterUserScreen">) =
         }),
       });
 
-      console.log("Response status:", response.status);
       
       let data;
       try {
         const text = await response.text();
-        data = text ? JSON.parse(text) : {};
-      } catch (parseError) {
+        data = text
+        // data = text ? JSON.parse(text) : {};
+      } 
+      catch (parseError) {
         console.error("Failed to parse response:", parseError);
         data = { message: "Failed to parse server response" };
       }
@@ -145,7 +132,7 @@ const RegisterUserScreen = ({ navigation }: ScreenProps<"RegisterUserScreen">) =
       console.log("Response data:", data);
 
       if (!response.ok) {
-        const errorMessage = data.message || `Registration failed with status ${response.status}`;
+        const errorMessage = data.message || `Registration failed with status ${response.status} ${data}`;
         console.error("API Error:", errorMessage);
         throw new Error(errorMessage);
       }
@@ -166,7 +153,8 @@ const RegisterUserScreen = ({ navigation }: ScreenProps<"RegisterUserScreen">) =
           onPress: () => navigation.replace("HomeScreen"),
         },
       ]);
-    } catch (error: any) {
+    } 
+    catch (error: any) {
       console.error("Registration error:", error);
       Alert.alert(
         "Registration Failed",

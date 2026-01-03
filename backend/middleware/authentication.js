@@ -36,6 +36,7 @@ async function authMiddleware(req, res, next) {
     // The secretKey option is required
     const decoded = await verifyToken(token, {
       secretKey: process.env.CLERK_SECRET_KEY,
+      clockSkewInMs: 120000,
     });
     
     req.userId = decoded.sub;
