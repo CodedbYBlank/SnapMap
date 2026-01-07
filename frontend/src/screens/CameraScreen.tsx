@@ -1,11 +1,11 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as Location from "expo-location";
+import * as ImagePicker from "expo-image-picker";
 import type { CameraType, FlashMode } from "expo-camera";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Button,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -21,20 +21,18 @@ export default function CameraScreen({
   const [facing, setFacing] = useState<CameraType>("back");
   const [flash, setFlash] = useState<FlashMode>("off");
   const [permission, requestPermission] = useCameraPermissions();
-  const [locationPermission, setLocationPermission] = useState(null);
   const [isCameraOk, setIsCameraOk] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
 
     const requestLocationPermission = async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (isMounted) {
-        setLocationPermission(status);
-      }
+      await Location.requestForegroundPermissionsAsync();
     };
 
-    requestLocationPermission();
+    if (isMounted) {
+      requestLocationPermission();
+    }
 
     return () => {
       isMounted = false;
@@ -66,13 +64,11 @@ export default function CameraScreen({
     const current = await Location.getForegroundPermissionsAsync();
 
     if (current.status === "granted") {
-      setLocationPermission(current.status);
       return "granted";
     }
 
     if (current.canAskAgain) {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      setLocationPermission(status);
       return status;
     }
 
@@ -80,7 +76,6 @@ export default function CameraScreen({
       "Location permission needed",
       "Enable location permission for Expo Go in system settings."
     );
-    setLocationPermission(current.status);
     return current.status;
   };
 
@@ -115,6 +110,60 @@ export default function CameraScreen({
     });
   };
 
+  const handleGalleryPick = async () => {
+    // Request media library permissions
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission needed",
+        "We need gallery access to select photos."
+      );
+      return;
+    }
+
+    // Launch image picker
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: false,
+      quality: 1,
+    });
+
+    if (result.canceled) {
+      return;
+    }
+
+    // Get location for gallery photo
+    let location = null;
+    const permissionStatus = await ensureLocationPermission();
+
+    if (permissionStatus === "granted") {
+      const servicesEnabled = await Location.hasServicesEnabledAsync();
+      if (!servicesEnabled) {
+        Alert.alert(
+          "Location off",
+          "Enable location services to add location data."
+        );
+      } else {
+        try {
+          location = await Location.getCurrentPositionAsync({});
+        } catch (error) {
+          Alert.alert("Location error", "Unable to fetch your location.");
+        }
+      }
+    }
+
+    // Navigate to confirmation screen with gallery photo
+    navigation.navigate("UploadConfirmationScreen", {
+      photo: {
+        uri: result.assets[0].uri,
+        width: result.assets[0].width,
+        height: result.assets[0].height,
+      } as any,
+      location,
+    });
+  };
+
   return (
     <View style={styles.container}>
       <CameraView
@@ -138,12 +187,21 @@ export default function CameraScreen({
             <Text style={styles.controlText}>Flip</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.shutterOuter}
-          onPress={handletheCapture}
-        >
-          <View style={styles.shutterInnerButton} />
-        </TouchableOpacity>
+        <View style={styles.controlsRow}>
+          <TouchableOpacity
+            style={styles.galleryButton}
+            onPress={handleGalleryPick}
+          >
+            <Text style={styles.controlText}>Gallery</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.shutterOuter}
+            onPress={handletheCapture}
+          >
+            <View style={styles.shutterInnerButton} />
+          </TouchableOpacity>
+          <View style={styles.galleryButton} />
+        </View>
       </View>
     </View>
   );

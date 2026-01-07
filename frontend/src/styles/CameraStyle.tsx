@@ -63,6 +63,15 @@ const CameraStyle = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
+  galleryButton: {
+    backgroundColor: "rgba(0,0,0,0.5)",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    minWidth: 80,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
 
 export default CameraStyle;
