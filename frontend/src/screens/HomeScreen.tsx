@@ -66,6 +66,13 @@ const HomeScreen = ({ navigation }: ScreenProps<"HomeScreen">) => {
 
         <TouchableOpacity
           style={styles.button}
+          onPress={() => navigation.navigate("EventGalleryScreen")}
+        >
+          <Text style={styles.buttonText}>EVENT GALLERY</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
           onPress={() => navigation.navigate("CameraScreen")}
         >
           <Ionicons
