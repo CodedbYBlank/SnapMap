@@ -8,7 +8,6 @@ import type { RootParamList } from "../types";
 // Import screens
 import SplashScreen from "../screens/SplashScreen";
 import SignInScreen from "../screens/SignInScreen";
-import SignUpScreen from "../screens/SignUpScreen";
 import HomeScreen from "../screens/HomeScreen";
 import CameraScreen from "../screens/CameraScreen";
 import MapScreen from "../screens/MapScreen";
@@ -33,7 +32,6 @@ const MainNavigator = () => {
     >
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
       <Stack.Screen name="SignInScreen" component={SignInScreen} />
-      <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="CameraScreen" component={CameraScreen} />
       <Stack.Screen name="MapScreen" component={MapScreen} />
